@@ -6,6 +6,10 @@ add_library(anarionnum STATIC
         numeric_env/NumericConfig.cpp
         numeric_env/NumericComponent.cpp
         numeric_env/NumericContext.cpp
+
+        operators/RandomGenerator.cpp
+
+        model/LinearRegression.cpp
         )
 
 add_library(anarionbase STATIC IMPORTED)
