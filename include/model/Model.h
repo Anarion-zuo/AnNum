@@ -5,8 +5,7 @@
 #ifndef ANNUM_MODEL_H
 #define ANNUM_MODEL_H
 
-#include <container/number_trait.h>
-#include <container/Matrix.hpp>
+#include <series/Matrix.h>
 #include <operators/RandomGenerator.h>
 
 namespace anarion {
@@ -20,9 +19,9 @@ namespace anarion {
 
     class Model {
     protected:
-        float64 learningRate = 0.01;
+        float64 learningRate = 1e-3;
         uint64 maxIteration = 1000;
-        float64 epsilon = num_trait<float64>::epsilon;
+        float64 epsilon = 1e-5;
         float64 precision = 1e-4;
 
         // operators

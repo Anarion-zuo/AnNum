@@ -12,15 +12,19 @@ namespace anarion {
 
     class LinearRegression : public Model {
     protected:
-        Array<float64> thetas;   // target parameters
+        BigFloatArray thetas;   // target parameters
         float64 bias;
         void initTargets(size_type num);  // give thetas dimension
 
-        float64 evaluate(Array<float64> &x);
     public:
         LinearRegression();
 
-        void fit(Matrix<float64> &X, Array<float64> &y);
+        void fit(Matrix &X, ArrayInterface &y);
+        float64 evaluate(const ArrayInterface &x) const ;
+        anarion::float64 evaluate(anarion::Matrix &x, size_type rowIndex);
+
+        float64 getBias() const { return bias; }
+        const BigFloatArray &getThetas() const { return thetas; }
     };
 }
 

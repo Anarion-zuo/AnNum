@@ -34,7 +34,8 @@ namespace anarion {
         template <typename float_type>
         float_type getFloat(float_type lower, float_type upper) {
             float_type result = float_type(getSysRandom());
-            result /= upper - lower;
+            result /= RAND_MAX;
+            result *= upper - lower;
             result += lower;
             return result;
         }

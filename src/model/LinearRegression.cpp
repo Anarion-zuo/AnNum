@@ -3,33 +3,45 @@
 //
 
 #include "model/LinearRegression.h"
-#include <container/Array.hpp>
+#include <series/Array.h>
+#include <operators/ArrayOperator.h>
 
-void anarion::LinearRegression::fit(anarion::Matrix<anarion::float64> &X, anarion::Array<anarion::float64> &y) {
+void anarion::LinearRegression::fit(anarion::Matrix &X, anarion::ArrayInterface &y) {
     size_type rowCount = X.getHeight();
-    if (rowCount != y.size()) {
+    if (rowCount != y.length()) {
         throw TrainDataShapeDifferent();
     }
     size_type colCount = X.getWidth();
     size_type iter = 0;
     initTargets(colCount);
     while (iter < maxIteration) {
-        randGen.setSeed(time(nullptr));
-        size_type rowIndex = randGen.getInt(0ul, rowCount);
-        auto row = X.getRow(rowIndex);
         bool shouldBreak = true;
-        Array<float64> newThetas(X.getWidth(), 0);
+        BigFloatArray newThetas(X.getWidth(), 0);
+        float64 batchVal = 0;
         for (size_type colIndex = 0; colIndex < colCount; ++colIndex) {
             float64 theta = thetas[colIndex];
-            float64 yhat = (row * thetas).sum() + bias;
-            float64 nval = learningRate * row[colIndex] * (y[rowIndex] - yhat);
+            batchVal = 0;
+            for (size_type rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
+                batchVal += X.getFloat(rowIndex, colIndex) * (y.getFloat(rowIndex) - evaluate(X, rowIndex));
+            }
+            batchVal /= rowCount;
+            float64 nval = learningRate * batchVal;
             if (shouldBreak) {
                 shouldBreak = shouldBreak && isPrecise(nval);
             }
             theta += nval;
             newThetas[colIndex] = (theta);
         }
+        float64 tbias = bias;
+        batchVal = 0;
+        for (size_type rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
+            batchVal += (y.getFloat(rowIndex) - evaluate(X, rowIndex));
+        }
+        batchVal /= rowCount;
+        tbias = learningRate * batchVal;
+
         thetas = newThetas;
+        bias = tbias;
         if (shouldBreak) {
             break;
         }
@@ -41,13 +53,23 @@ anarion::LinearRegression::LinearRegression() {
 
 }
 
-anarion::float64 anarion::LinearRegression::evaluate(anarion::Array<anarion::float64> &x) {
-    auto product = thetas * x;
-    auto dotp = product.sum();
+anarion::float64 anarion::LinearRegression::evaluate(const ArrayInterface &x) const {
+    auto product = ArrayOperator().mul(thetas, x);
+    float64 dotp = ArrayOperator().sum(*product);
+    delete product;
     return bias + dotp;
 }
 
 void anarion::LinearRegression::initTargets(anarion::size_type num) {
-    thetas = Array<float64>(num, 0);
-    bias = 0;
+    float64 randVal = randGen.getFloat<float64>(0.0f, 2.0f);
+    thetas = BigFloatArray(num, randVal);
+    bias = randVal;
+}
+
+anarion::float64 anarion::LinearRegression::evaluate(anarion::Matrix &x, size_type rowIndex) {
+    float64 product = 0;
+    for (size_type colIndex = 0; colIndex < x.getWidth(); ++colIndex) {
+        product += x.getFloat(rowIndex, colIndex) * thetas[colIndex];
+    }
+    return bias + product;
 }
