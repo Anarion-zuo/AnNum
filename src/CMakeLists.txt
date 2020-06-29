@@ -7,9 +7,12 @@ add_library(anarionnum STATIC
         numeric_env/NumericComponent.cpp
         numeric_env/NumericContext.cpp
 
+        data/Series.cpp
+        data/SeriesOperator.cpp
+
         operators/RandomGenerator.cpp
 
-        model/LinearRegression.cpp
+        model/BatchLinearRegression.cpp
         )
 
 add_library(anarionbase STATIC IMPORTED)

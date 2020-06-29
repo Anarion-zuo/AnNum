@@ -1,21 +1,17 @@
 #include <iostream>
-#include <model/LinearRegression.h>
-#include <base_data/operators/ArrayOperator.h>
+#include <model/BatchLinearRegression.h>
+#include <data/Series.h>
 
 using namespace std;
 using namespace anarion;
 
 int main() {
-    ArrayInterface *array = new BigFloatArray;
-    for (float64 x = 0; x < 10000; x += .001) {
-        array->push_back(x);
-    }
-    ArrayInterface *stdArray = ArrayOperator().standardize(*array);
-    Matrix X {stdArray};
-    ArrayInterface *y = ArrayOperator().mul(*array, *new IntegerArray(stdArray->length(), 2));
-    LinearRegression lr;
-    lr.fit(X, *y);
-    auto thetas = lr.getThetas();
-    float64 theta = thetas.getFloat(0), bias = lr.getBias();
+
+    Series series = Series::createByType<float32>();
+    series.insertNumber(0, 1.5f);
+    float32 &number = series.getNumber<float32>(0);
+    number = 2.4;
+    float32 nn = series.getNumber<float32>(0);
+
     return 0;
 }
