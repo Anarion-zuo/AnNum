@@ -7,7 +7,6 @@ add_subdirectory(src)
 
 include_directories(include)
 include_directories(include/base)
-include_directories(include/base_data)
 
 #add_library(anarionbase STATIC IMPORTED)
 #set_target_properties(anarionbase PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/lib/libanarionbase.a)
